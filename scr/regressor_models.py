@@ -7,15 +7,35 @@ from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
 class RegressorModels:
 
     def get_X_y(df):
-        X = pd.DataFrame(df.drop(columns=['price', 'gardenSurface', 'terraceSurface', 'floor']))
+        """Get the target (y) and features (X)
+
+        Args:
+            df (DataFrame): Framework with data from immo Eliza
+
+        Returns:
+            NumpyArray: Target, Features
+        """
+        # Drop clumns with not impat in the prediction
+        X = pd.DataFrame(df.drop(columns=['price', 'gardenSurface', 'terraceSurface', 'floor']))#features
         y = np.array(df.price).reshape(-1, 1)#target
 
         return X, y
 
 
     def get_train_test(X, y, normalize = False):
+        """Split the target and features in training and test data
+
+        Args:
+            X (NumpyArray): Feature
+            y (NumpyArray): Target
+            normalize (bool, optional): Normalize the Features to train and test. Defaults to False.
+
+        Returns:
+            NumpyArray: X_train, X_test, y_train, y_test
+        """        
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.30, random_state=40)
 
+        # validation to normalize or not the Xtrain and Xtest
         if normalize:
             scalar = StandardScaler()
 
@@ -32,10 +52,19 @@ class RegressorModels:
         return X_train, X_test, y_train, y_test
 
 
-    def get_performance(y_train, pred_train):
-        score = r2_score(y_train, pred_train)
-        mse = mean_squared_error(y_train, pred_train)
-        rmse = mse**0.5
-        mae = mean_absolute_error(y_train, pred_train)
+    def get_performance(y, pred):
+        """Get the performace of a model prediction
+
+        Args:
+            y (NumpyArray): Target
+            pred (NumpyArray): Prediction
+
+        Returns:
+            Floats: score, mse, rmse, mae
+        """        
+        score = r2_score(y, pred) # Score
+        mse = mean_squared_error(y, pred) # Mean Squared Error
+        rmse = mse**0.5 # Root Mean Squared Error
+        mae = mean_absolute_error(y, pred) # Mean Absolute Error
 
         return score, mse, rmse, mae
